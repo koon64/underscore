@@ -2,7 +2,7 @@ import os
 import json
 import urllib3
 from datetime import datetime
-from math import log, floor
+from math import log, floor, sqrt
 from re import sub
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -21,6 +21,8 @@ class Underscore:
         self.format = FormatClass(self)
         self.grades = GradesClass()
         self.time = TimeClass(self)
+        self.convert = ConvertClass()
+        self.math = MathClass()
 
     '''
     File functions
@@ -251,3 +253,91 @@ class TimeClass:
                 return "tomorrow"
             return "yesterday"
         return None
+
+
+class ConvertClass:
+    def __init__(self):
+        self.decimal = ConvertDecimal()
+        self.hex = ConvertHex(self.decimal)
+        self.binary = ConvertBinary(self.decimal)
+        self.ascii = ConvertAscii(self.decimal)
+
+
+class ConvertDecimal:
+    def binary(self, x):
+        return bin(x)[2:]
+
+    def hex(self, x):
+        return hex(x)[2:]
+
+
+class ConvertHex:
+    def __init__(self, decimal_class):
+        self.base = decimal_class
+
+    def binary(self, x):
+        return self.base.binary(self.decimal(x))
+
+    def decimal(self, x):
+        return int(x, 16)
+
+
+class ConvertBinary:
+    def __init__(self, decimal_class):
+        self.base = decimal_class
+
+    def decimal(self, binary):
+        return int(binary, 2)
+
+    def hex(self, binary):
+        return self.base.hex(self.decimal(binary))
+
+
+class ConvertAscii:
+    def __init__(self, decimal_class):
+        self.base = decimal_class
+
+    def decimal(self, text):
+        chars = list(text)
+        return [ord(char) for char in chars]
+
+    def hex(self, text):
+        decimals = self.decimal(text)
+        return [self.base.hex(num) for num in decimals]
+
+
+class MathClass:
+    def get_points(self, point_a, point_b):
+        if type(point_a[0]) is int or type(point_a[0]) is float:
+            if type(point_a[1]) is int or type(point_a[1]) is float:
+                if type(point_b[0]) is int or type(point_b[0]) is float:
+                    if type(point_b[1]) is int or type(point_b[1]) is float:
+                        return point_a[0], point_b[0], point_a[1], point_b[1]
+                    raise Exception("the 2nd part in the 2nd tuple must be in int or float")
+                raise Exception("the 1st part in the 2nd tuple must be in int or float")
+            raise Exception("the 2nd part in the 1st tuple must be in int or float")
+        raise Exception("the 1st part in the 1st tuple must be in int or float")
+
+    def distance(self, point_a, point_b):
+        if type(point_a) is tuple and type(point_b) is tuple:
+            x1, x2, y1, y2 = self.get_points(point_a, point_b)
+            return sqrt((x2 - x1)**2 + (y2 - y1)**2)
+        raise Exception('Point A and or B must be tuples')
+
+    def slope(self, point_a, point_b):
+        if type(point_a) is tuple and type(point_b) is tuple:
+            x1, x2, y1, y2 = self.get_points(point_a, point_b)
+            rise = y2 - y1
+            run = x2 - x1
+            if run != 0:
+                return rise / run
+            else:
+                return "undefined"
+        raise Exception('Point A and or B must be tuples')
+
+    def midpoint(self, point_a, point_b):
+        if type(point_a) is tuple and type(point_b) is tuple:
+            x1, x2, y1, y2 = self.get_points(point_a, point_b)
+            return ((x1 + x2) / 2), ((y1 + y2) / 2)
+        raise Exception('Point A and or B must be tuples')
+
