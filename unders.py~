@@ -178,7 +178,6 @@ class FormatClass:
             text = text + "s"
         return str(number) + " " + text
 
-    # returns a string of a formated time from int seconds 
     def time(self, seconds, full_text=False):
         if seconds / self._.yis >= 1:
             return str(floor(seconds / self._.yis)) + "y" \
@@ -198,7 +197,6 @@ class FormatClass:
         else:
             return str(seconds) + "s" if not full_text else self.plural(seconds, "second")
 
-    # returns a string of a number and it's ordinal indicator ("1st", "25th")
     def ordinal(self, number):
         number_string = str(number)
         last_number = int(number_string[-1])
