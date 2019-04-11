@@ -3,12 +3,14 @@ import json
 import urllib3
 from datetime import datetime
 from math import log, floor, sqrt
-from re import sub
+from re import sub, match
+from socket import gethostbyname, error
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 class Underscore:
+    """This is the main class for Underscore"""
 
     def __init__(self):
         # vars
@@ -23,10 +25,10 @@ class Underscore:
         self.time = TimeClass(self)
         self.convert = ConvertClass()
         self.math = MathClass()
+        self.valid = ValidClass()
+        self.parse = ParseClass(self)
 
-    '''
-    File functions
-    '''
+    # File functions
 
     # returns a string from a file's content
     def fs(self, file_path):
@@ -78,10 +80,8 @@ class Underscore:
     def file_exists(self, file_path):
         return os.path.isfile(file_path)
 
-    '''
-    Other functions
-    Formatting mostly
-    '''
+    # Other functions
+    # Formatting mostly    
 
     # converts a number to a letter, ex: 0 => a, 3 => d
     def assign_letter(self, numb, capital=False):
@@ -118,6 +118,8 @@ class Underscore:
 
 
 class GradesClass:
+    """Class for converting different grade formats"""
+
     # converts a letter grade to a gpa
     def grade_to_gpa(self, grade):
         amounts = {
@@ -142,6 +144,8 @@ class GradesClass:
 
 
 class FormatClass:
+    """Class for formating a various amount of information"""
+
     def __init__(self, underscore):
         self._ = underscore
 
@@ -221,9 +225,9 @@ class FormatClass:
 
 
 class TimeClass:
-    '''
+    """
     Time functions
-    '''
+    """
 
     def __init__(self, underscore):
         self._ = underscore
@@ -344,3 +348,43 @@ class MathClass:
             return ((x1 + x2) / 2), ((y1 + y2) / 2)
         raise Exception('Point A and or B must be tuples')
 
+class ParseClass:
+    def __init__(self, underscore):
+        self._ = underscore
+
+    # parses an email address
+    def email(self, email_address):
+        if self._.valid.email(email_address):
+            parts = email_address.split("@")
+            return EmailAddress(parts[0], parts[1]) 
+
+class ValidClass:
+    # tests if a domain exists
+    def domain(self, domain_name):
+        try:
+            gethostbyname(domain_name)
+            return True
+        except error:
+            return False
+
+    # tests if an email is valid
+    def email(self, email_address, check_domain=False):
+        if type(email_address) is str:
+            if bool(match("[^@]+@[^@]+\.[^@]+", email_address)):
+                if not check_domain:
+                    return True
+                domain = email_address.rsplit('@', 1)[-1]
+                return self.domain(domain)
+        raise Exception("Email address much be a str")
+
+
+class EmailAddress:
+    def __init__(self, username, domain):
+        self.username = username
+        self.domain = domain
+
+    def __str__(self):
+        return "{}@{}".format(self.username, self.domain)
+
+    def __tuple__(self):
+        return (self.username, self.domain)
