@@ -5,6 +5,7 @@ from datetime import datetime
 from math import log, floor, sqrt
 from re import sub, match
 from socket import gethostbyname, error
+from pprint import pprint
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -40,6 +41,9 @@ class Underscore:
             return True
         print("canceling update")
         return False
+
+    def print(self, obj):
+        pprint(obj)
 
     # returns a string from a file's content
     def fs(self, file_path):
