@@ -342,11 +342,41 @@ class MathClass:
                 return "undefined"
         raise Exception('Point A and or B must be tuples')
 
+    # returns the midpoint of two cordinates
     def midpoint(self, point_a, point_b):
         if type(point_a) is tuple and type(point_b) is tuple:
             x1, x2, y1, y2 = self.get_points(point_a, point_b)
             return ((x1 + x2) / 2), ((y1 + y2) / 2)
         raise Exception('Point A and or B must be tuples')
+
+    # returns all the factors of a number
+    def factors(self, number):
+        if type(number) is int:
+            factor = 1
+            factors = []
+            while True:
+                if factor >= number:
+                    factors.append(number)
+                    break
+                if number % factor == 0:
+                    factors.append(factor)
+                factor += 1
+            return factors
+        raise Exception("The number must be an int")
+    
+    # returns the GCF of two or more number
+    def gcf(self, number1, number2):
+        if type(number1) is int and type(number2) is int:
+            factors1 = self.factors(number1)
+            factors2 = self.factors(number2)  
+            main_factors = factors1 if len(factors1) > len(factors2) else factors2
+            sub_factors = factors1 if len(factors1) < len(factors2) else factors2
+            factors = []
+            for number in main_factors:
+                if number in sub_factors:
+                    factors.append(number)
+            return factors[len(factors) - 1]
+        raise Exception("numbers 1 and 2 must be type int")
 
 class ParseClass:
     def __init__(self, underscore):
