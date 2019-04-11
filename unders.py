@@ -14,7 +14,7 @@ class Underscore:
 
     def __init__(self):
         # vars
-        self.underscore_version = "1.0.1"
+        self.underscore_version = "1.0.2"
         self.his = (1 * 60 * 60)  # hour in seconds
         self.dis = (1 * 60 * 60 * 24)  # day in seconds
         self.mis = (30.5 * 24 * 60 * 60)  # month in seconds
@@ -29,6 +29,17 @@ class Underscore:
         self.parse = ParseClass(self)
 
     # File functions
+
+    # updates the underscore version
+    def update(self):
+        consent = input("Would you like to download the latest version of underscore? (Y or N)")
+        consent = consent.lower()
+        if consent == "y" or consent == "yes":
+            newest_version = self.rs("https://raw.githubusercontent.com/koon64/underscore/master/unders.py")
+            self.sf(newest_version, "unders.py")
+            return True
+        print("canceling update")
+        return False
 
     # returns a string from a file's content
     def fs(self, file_path):
