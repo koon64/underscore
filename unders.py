@@ -403,6 +403,161 @@ class ParseClass:
             parts = email_address.split("@")
             return EmailAddress(parts[0], parts[1]) 
 
+    # parses a US address
+    def address(self, address):
+        if type(address) is str:
+            address = address.replace(", apt", " apt")
+            parts = address.split(",")
+            part_numb = 0
+            po_box = False
+            zip_code = None
+            po_box_number = None
+            address_number_suffix = None
+            dirs = ["n", "e", "s", "w"]
+            cid = "USA"
+            country = "United States of America"
+            states = {
+                "AL": "Alabama",
+                "AK": "Alaska",
+                "AS": "American Samoa",
+                "AZ": "Arizona",
+                "AR": "Arkansas",
+                "CA": "California",
+                "CO": "Colorado",
+                "CT": "Connecticut",
+                "DE": "Delaware",
+                "DC": "District Of Columbia",
+                "FM": "Federated States Of Micronesia",
+                "FL": "Florida",
+                "GA": "Georgia",
+                "GU": "Guam",
+                "HI": "Hawaii",
+                "ID": "Idaho",
+                "IL": "Illinois",
+                "IN": "Indiana",
+                "IA": "Iowa",
+                "KS": "Kansas",
+                "KY": "Kentucky",
+                "LA": "Louisiana",
+                "ME": "Maine",
+                "MH": "Marshall Islands",
+                "MD": "Maryland",
+                "MA": "Massachusetts",
+                "MI": "Michigan",
+                "MN": "Minnesota",
+                "MS": "Mississippi",
+                "MO": "Missouri",
+                "MT": "Montana",
+                "NE": "Nebraska",
+                "NV": "Nevada",
+                "NH": "New Hampshire",
+                "NJ": "New Jersey",
+                "NM": "New Mexico",
+                "NY": "New York",
+                "NC": "North Carolina",
+                "ND": "North Dakota",
+                "MP": "Northern Mariana Islands",
+                "OH": "Ohio",
+                "OK": "Oklahoma",
+                "OR": "Oregon",
+                "PW": "Palau",
+                "PA": "Pennsylvania",
+                "PR": "Puerto Rico",
+                "RI": "Rhode Island",
+                "SC": "South Carolina",
+                "SD": "South Dakota",
+                "TN": "Tennessee",
+                "TX": "Texas",
+                "UT": "Utah",
+                "VT": "Vermont",
+                "VI": "Virgin Islands",
+                "VA": "Virginia",
+                "WA": "Washington",
+                "WV": "West Virginia",
+                "WI": "Wisconsin",
+                "WY": "Wyoming"
+            }
+            
+            state = None
+            apt_number = None
+            for part in parts:
+                # part parts
+                pp = part.split()
+                lower_case = part.lower()
+                lpp = lower_case.split()
+                if part_numb == 0:
+                    # tests if there is "P.O. Box #" in the begining
+                    # if there is then it will remove it from the address and keep going on
+                    if lower_case.replace(".", "")[:7] == "po box ":
+                        # sets that it has the PO box #
+                        po_box = True
+                        po_box_number = pp[2]
+                        # removes the PO part of the address
+                        part = part[part.find(po_box_number) + len(po_box_number) + 1:]
+                        # resets the vars
+                        lower_case = part.lower()
+                        lpp = lower_case.split()
+                        pp = part.split()
+                    
+                    # gets the address number
+                    
+                    # needs to remove "apt. #" at the end of the part
+                    
+                    test_case = lower_case.replace(".", "").replace("#", "")
+                    test_pp = test_case.split()
+                    if "apt" in test_pp:
+                        apt_number = test_case[test_case.find(" apt ") + 5:]
+                        part = part[:test_case.find(" apt ")]
+                        pp = part.split()
+                        lower_case = part.lower()
+                        lpp = lower_case.split()
+
+                    # first sees if there is an A or B... after the number to remove it
+                    if lpp[0][-1].isalpha():
+                        address_number_suffix = pp[0][-1].upper()
+                        address_number = pp[0][:len(pp[0]) - 1]
+                        street_name = part[part.find(address_number) + len(address_number) + 2:]
+                    elif len(pp[1]) == 1 and lpp[1].isalpha() and lpp[1] not in dirs:
+                        address_number_suffix = pp[1].upper()
+                        address_number = pp[0]
+                        street_name = part[part.find(address_number) + len(address_number) + 3:]
+                    if address_number_suffix is None:
+                        try:
+                            # attempts to parse the address number as an int
+                            # it tests if it is a float bc some addresses can be .5
+                            address_number = float(pp[0])
+                            address_number = pp[0]
+                        
+                        except:
+                            raise Exception("there has been an error parsing the address because there is no number in the begining of it. This could be due to an apartment number which are not currently supported")
+                        street_name = part[part.find(address_number) + len(address_number) + 1:]
+                elif part_numb == 1:
+                    locality = part.strip()
+                elif part_numb == 2:
+                    has_state_match = False
+                    match_round = 0
+                    while not has_state_match:
+                        for state_abr in states:
+                            test = states[state_abr]
+                            if match_round == 1:
+                                test = state_abr
+                            test = test.lower()
+                            if test in lower_case:
+                                state = state_abr
+                        if state is not None:
+                            break
+                        match_round += 1
+                        if match_round == 2:
+                            raise Exception("could not find a valid state, must be US")
+                    zip_code = pp[len(pp) - 1]
+                elif part_numb == 3:
+                    pass
+                    # print(part)
+                part_numb += 1
+            return Address(country, cid, states[state], state, locality, zip_code, street_name, address_number, address_number_suffix, apt_number, po_box_number)
+        else:
+            raise Exception("address must be a str")
+
 class ValidClass:
     # tests if a domain exists
     def domain(self, domain_name):
@@ -433,3 +588,25 @@ class EmailAddress:
 
     def __tuple__(self):
         return (self.username, self.domain)
+
+
+class Address:
+    def __init__(self, country, cid, state, sid, locality, zip_code, street, number, number_suffix=None, apt_number=None, po_box_number=None):
+        self.country = country
+        self.cid = cid
+        self.state = state
+        self.sid = sid
+        self.locality = locality
+        self.zip = zip_code
+        self.street = street
+        self.number = number
+        self.number_suffix = number_suffix
+        self.apt_number = apt_number
+        self.po_box_number = po_box_number
+
+    def __str__(self):
+        po_box_str = "P.O. Box {} ".format(self.po_box_number) if self.po_box_number is not None else ""
+        number_suffix_str = self.number_suffix if self.number_suffix is not None else ""
+        apt_number_str = " Apt. #{}".format(self.apt_number) if self.apt_number is not None else ""
+        return "{}{}{} {}{}, {}, {} {}, {}".format(po_box_str, self.number, number_suffix_str, self.street, apt_number_str, self.locality, self.sid, self.zip, self.cid)
+
