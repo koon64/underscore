@@ -610,3 +610,9 @@ class Address:
         apt_number_str = " Apt. #{}".format(self.apt_number) if self.apt_number is not None else ""
         return "{}{}{} {}{}, {}, {} {}, {}".format(po_box_str, self.number, number_suffix_str, self.street, apt_number_str, self.locality, self.sid, self.zip, self.cid)
 
+    @property
+    def street_format(self):
+        po_box_str = "P.O. Box {} ".format(self.po_box_number) if self.po_box_number is not None else ""
+        number_suffix_str = self.number_suffix if self.number_suffix is not None else ""
+        apt_number_str = " Apt. #{}".format(self.apt_number) if self.apt_number is not None else ""
+        return "{}{}{} {}{}".format(po_box_str, self.number, number_suffix_str, self.street, apt_number_str)
