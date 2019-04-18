@@ -124,12 +124,62 @@ class Underscore:
 
     # calculates the age from a date
     def get_age(self, date_string):
-        date = self.time.parse_date(date_string)
+        date = self.time.parse_date(date_string) if type(date_string) is str else date_string
         now = datetime.now()
         date_timestamp = date.timestamp()
         now_timestamp = now.timestamp()
         difference = now_timestamp - date_timestamp
         return floor(difference / self.yis)
+
+    # gets the zodiac sign of a date
+    def get_zodiac(self, date_string, return_emoji=False):
+        date = self.time.parse_date(date_string) if type(date_string) is str else date_string
+        day_of_year = date.timetuple().tm_yday
+        if 19 <= day_of_year <= 48:
+            zodiac_emoji = '♒'
+            zodiac = 'aquarius'
+        elif 49 <= day_of_year <= 78:
+            zodiac_emoji = '♓'
+            zodiac = 'pisces'
+        elif 49 <= day_of_year <= 108:
+            zodiac_emoji = '♈'
+            zodiac = 'aries'
+        elif 109 <= day_of_year <= 139:
+            zodiac_emoji = '♉'
+            zodiac = 'taurus'
+        elif 140 <= day_of_year <= 170:
+            zodiac_emoji = '♊'
+            zodiac = 'gemini'
+        elif 171 <= day_of_year <= 202:
+            zodiac_emoji = '♋'
+            zodiac = 'cancer'
+        elif 203 <= day_of_year <= 233:
+            zodiac_emoji = '♌'
+            zodiac = 'leo'
+        elif 234 <= day_of_year <= 264:
+            zodiac_emoji = '♍'
+            zodiac = 'virgo'
+        elif 265 <= day_of_year <= 294:
+            zodiac_emoji = '♎'
+            zodiac = 'libra'
+        elif 295 <= day_of_year <= 324:
+            zodiac_emoji = '♏'
+            zodiac = 'scorpio'
+        elif 325 <= day_of_year <= 354:
+            zodiac_emoji = '♐'
+            zodiac = 'sagittarius'
+        else:
+            zodiac_emoji = '♑'
+            zodiac = 'capricorn'
+        return zodiac if not return_emoji else zodiac_emoji
+
+    # gets the current grade from the year of (high school) graduation
+    def get_grade(self, yog, school_start_month=8, school_end_month=6):
+        now = self.time.now()
+        target_year = now.year + 1 if school_start_month <= now.month <= school_end_month else now.year
+        return 12 + (target_year - int(yog))
+
+
 
 
 class GradesClass:
@@ -246,6 +296,9 @@ class TimeClass:
 
     def __init__(self, underscore):
         self._ = underscore
+
+    def now(self):
+        return datetime.now()
 
     def parse_date(self, string):
         return datetime.strptime(string, "%m/%d/%Y")
