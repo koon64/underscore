@@ -1,4 +1,4 @@
-import os
+﻿import os
 import json
 import urllib3
 from datetime import datetime
@@ -49,7 +49,7 @@ class Underscore:
     def fs(self, file_path):
         if type(file_path) is str:
             if self.file_exists(file_path):
-                with open(file_path, 'r') as file:
+                with open(file_path, 'r', encoding='utf8') as file:
                     return file.read()
             else:
                 raise Exception('"' + file_path + '" does not exist')
