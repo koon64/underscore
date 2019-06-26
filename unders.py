@@ -1,14 +1,16 @@
 ﻿import os
 import json
-import urllib3
 from datetime import datetime
 from math import log, floor, sqrt
 from re import sub, match
 from socket import gethostbyname, error
 from pprint import pprint
 from collections import Counter
-
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+try:
+    import urllib3
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+except:
+    print("Could not import urllib3")
 
 
 class Underscore:
@@ -21,6 +23,13 @@ class Underscore:
         self.dis = (1 * 60 * 60 * 24)  # day in seconds
         self.mis = (30.5 * 24 * 60 * 60)  # month in seconds
         self.yis = (365 * 24 * 60 * 60)  # year in seconds
+        self.grade_match = {
+            0: "Kindergartner",
+            9: "Freshman",
+            10: "Sophomore",
+            11: "Junior",
+            12: "Senior"
+        }
         # sub classes
         self.format = FormatClass(self)
         self.grades = GradesClass()
@@ -208,6 +217,7 @@ class GradesClass:
 
     # converts a letter grade to a gpa
     def grade_to_gpa(self, grade):
+        grade = str(grade).upper()
         amounts = {
             "A+": 4, "A": 4, "A-": 3.66, "-A": 3.66, "B+": 3.33, "B": 3, "B-": 2.66, "C+": 2.33, "C": 2, "C-": 1.66,
             "D": 1, "F": 0
@@ -311,6 +321,7 @@ class FormatClass:
             "focus": "foci",
             "foot": "feet",
             "formula": "formulae",
+            "freshman": "freshmen",
             "fungus": "fungi",
             "gallows": "gallows",
             "genus": "genera",
@@ -516,7 +527,7 @@ class ConvertHex:
         return self.base.binary(self.decimal(x))
 
     def decimal(self, x):
-        return int(x, 16)
+        return int(str(x), 16)
 
 
 class ConvertBinary:
@@ -607,6 +618,7 @@ class MathClass:
                     factors.append(number)
             return factors[len(factors) - 1]
         raise Exception("numbers 1 and 2 must be type int")
+
 
 class ParseClass:
     def __init__(self, underscore):
@@ -772,6 +784,7 @@ class ParseClass:
             return Address(country, cid, states[state], state, locality, zip_code, street_name, address_number, address_number_suffix, apt_number, po_box_number)
         else:
             raise Exception("address must be a str")
+
 
 class ValidClass:
     # tests if a domain exists

@@ -23,6 +23,8 @@ _.dis                 # 86400
 _.mis                 # 2635200
 # Number of seconds in a year
 _.yis                 # 31536000
+# Matches a grade number with text
+_.grade_match[12]  # "Senior"
 ```
 ### File functions
 
@@ -84,11 +86,24 @@ _.strip_tags(string)  # Hello, here is some text
 # Gets text between two strings
 _.between(string, "here", "text")  # " is some "
 
-# Removes the text between two string
-_.remove_all_between(string, "here", "text")  # "<h1>Hello, heretext</h1>"
+# Deletes the text between two string
+_.delete_all_between(string, "here", "text")  # "<h1>Hello, heretext</h1>"
 
 # Gets an age from a string 
 _.get_age("3/29/2003")  # 15
+
+# Returns the zodiac sign from a birthdate, can also return the emoji
+_.get_zodiac("3/29/2004", return_emoji=False)  # "aries"
+_.get_zodiac("3/29/2004", return_emoji=True)  # "♈"
+
+# Returns grade level from a HS year of graduation
+_.get_grade(2019, school_start_month=8, school_end_month=6)  # 12
+# You can use this with the _.grade_match variable to get the text version of the grade
+_.grade_match[_.get_grade(2019)]  # "Senior"
+
+# Returns all the common characters from two strings
+_.common(string, "Hello World")  # "Helloor"
+
 
 ```
 
@@ -126,3 +141,62 @@ _.format.possession("Max")  # "Max's"
 _.format.possession("Alexis")  # "Alexis'"
 ```
 
+### Grade Functions
+
+```python
+# Converts a letter grade to a gpa
+_.grades.grade_to_gpa("A")  # 4
+
+# Converts a grade (%) to a letter
+_.grades.grade_to_letter(95)  # "A"
+```
+
+### Time Functions
+```python
+# Returns the current datetime obj
+_.time.now()
+
+# Turns a date string "mm/dd/YYYY" to a datetime obj
+time1 = _.time.parse_date("06/26/2019")
+time2 = _.time.parse_date("6/26/2016")
+
+# Tests if two datetime objs are the same DAY, not year (good for birthdays)
+_.time.same_day(time1, time2)  # True
+
+# Tests if two datetime objs are the same date
+_.time.same_date(time1, time2)  # False
+
+# Tests if a datetime obj is the same DAY as today
+_.time.is_today(time1)  # True
+
+# Returns a natural day from a datetime obj
+_.time.natural_day(time1)  # "today"
+```
+
+### Convert Class
+#### Decimal
+```python
+# Converts decimal to binary
+_.convert.decimal.binary(69) # '1000101'
+
+# Converts decimal to hex
+_.convert.decimal.hex(420)  # '1a4'
+
+```
+#### Hex
+```python
+# Converts hex to decimal
+_.convert.hex.decimal(45)  # 69
+
+# Converts hex to binary
+_.convert.hex.binary('1a4')  # '110100100'
+```
+
+#### Binary
+```python
+# Converts binary to decimal
+_.convert.binary.decinal('1000000')  # 64
+
+# Converts binary to hex
+_.convert.binary.hex('1000000')  # 40
+```
