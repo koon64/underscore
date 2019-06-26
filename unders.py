@@ -6,6 +6,7 @@ from math import log, floor, sqrt
 from re import sub, match
 from socket import gethostbyname, error
 from pprint import pprint
+from collections import Counter
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -179,7 +180,27 @@ class Underscore:
         target_year = now.year + 1 if school_start_month <= now.month <= school_end_month else now.year
         return 12 + (target_year - int(yog))
 
+    # returns common characters from two strings
+    def common(self, str1, str2):
+        dict1 = Counter(str1)
+        dict2 = Counter(str2)
 
+        # take intersection of these dictionaries
+        common_dict = dict1 & dict2
+
+        if len(common_dict) == 0:
+            return ""
+
+        # get a list of common elements
+        common_chars = list(common_dict.elements())
+
+        # sort list in ascending order to print resultant
+        # string on alphabetical order
+        common_chars = sorted(common_chars)
+
+        # join characters without space to produce
+        # resultant string
+        return ''.join(common_chars)
 
 
 class GradesClass:
