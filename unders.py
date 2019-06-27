@@ -261,7 +261,13 @@ class FormatClass:
 
     # formats a number with commas
     def number(self, number):
-        return "{:,}".format(number)
+        return "{:,}".format(int(number))
+
+    # formats a number with commas and decimal
+    def money(self, number):
+        number_string = str(number)
+        cents = number_string[-2:]
+        return self.number(number_string[:-2]) + '.' + cents
 
     # returns a string with the appropriate plural
     def plural(self, number, text):

@@ -131,6 +131,9 @@ _.format.bytes(12288)  # "12 KB"
 # Adds commas to a number
 _.format.number(12345678)  # "12,345,678"
 
+# Adds commas and decimal places
+_.format.money(1234567800)  # "12,345,678.00"
+
 # Returns a string with a number and the plural word after the amount
 _.format.plural(5, "dog")  # "5 dogs"
 _.format.plural(1, "tree")  # "1 tree"
