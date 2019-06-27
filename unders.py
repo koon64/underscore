@@ -815,7 +815,7 @@ class EmailAddress:
         return "{}@{}".format(self.username, self.domain)
 
     def __tuple__(self):
-        return (self.username, self.domain)
+        return self.username, self.domain
 
 
 class Address:

@@ -5,6 +5,18 @@ The goal of this project is to decress the amount of code that you need to type 
 
 _Similar to Jquery_
 
+## Table of Contents
+1. [Setup](#setup)
+2. [Variables](#variables)
+3. [File Functions](#file-functions)
+4. [Rest Functions](#rest-functions)
+5. [Other Functions](#miscellaneous-functions)
+6. [Formatting Functions](#formatting-functions)
+7. [Grade Functions](#grade-functions)
+8. [Time Functions](#time-functions)
+9. [Converting Functions](#convert-class)
+10. [Math Functions](#math-functions)
+11. [Parsing Functions](#parse-functions)
 ## Setup
 
 ```python
@@ -199,4 +211,72 @@ _.convert.binary.decinal('1000000')  # 64
 
 # Converts binary to hex
 _.convert.binary.hex('1000000')  # 40
+```
+
+### Math Functions
+#### Point Functions
+A point will be a tuple `(1,2)` 
+```python
+# Get the distance between two points
+_.math.distance((1,2), (4,2))  # 3.0
+
+# Get the slope of two points
+_.math.slope((0,0), (1,2))  # 2.0
+
+# Get the midpoint of two points
+_.math.midpoint((1,2), (4,2))  # (2.5, 2.0)
+```
+#### Other Functions
+```python
+# Get a list factors of a number
+_.math.factors(64)
+# Gets the greatest common factor
+_.math.gcf(64, 364)  # 4
+```
+
+### Parse Functions
+#### Email
+```python
+email = _.parse.email("john@gmail.com")
+print(email)  # "john@gmail.com"
+
+email.username  # "john"
+email.domain  # "gmail.com"
+```
+#### Address
+This is US addresses only for the moment
+```python
+address = _.parse.address("15 Main Street, Millburn, NJ 07041")
+print(address)  # "15 Main Street, Millburn, NJ 07041, USA"
+
+address.number    # 15
+address.street    # "Main Street"
+address.locality  # "Millburn"
+address.zip       # "07041"
+address.sid       # "NJ"
+address.state     # "New Jersey"
+address.cid       # "USA"
+address.country   # "United States of America"
+
+# You can print the street format of the address with:
+address.street_format  # "15 Main Street"
+
+# This also works with PO boxes
+address = _.parse.address("p.o. box 55 15 Main Street, Millburn, NJ 07041")
+print(address)  # "P.O. Box 55 15 Main Street, Millburn, NJ 07041, USA"
+address.po_box_number  # 55
+```
+
+### Validate Functions
+#### Domain
+```python
+_.valid.domain("google.com")  # True
+_.valid.domain("sdfsdhgfdcvbrt.com")  # False
+```
+#### Email
+```python
+_.valid.email("john@gmail.com", check_domain=False)  # True
+_.valid.email("john@sdfsdhgfdcvbrt.com", check_domain=False)  # True
+# If you set check_domain to true, it will see if the domain is valid
+_.valid.email("john@sdfsdhgfdcvbrt.com", check_domain=True)  # False
 ```
