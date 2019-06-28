@@ -6,11 +6,13 @@ from re import sub, match
 from socket import gethostbyname, error
 from pprint import pprint
 from collections import Counter
-try:
-    import urllib3
-    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-except:
-    print("Could not import urllib3")
+import urllib.request
+# try:
+#     import urllib3
+#     urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+# except:
+#
+#     print("Could not import urllib3")
 
 
 class Underscore:
@@ -34,7 +36,7 @@ class Underscore:
         self.format = FormatClass(self)
         self.grades = GradesClass()
         self.time = TimeClass(self)
-        self.convert = ConvertClass()
+        self.convert = ConvertClass(self)
         self.math = MathClass()
         self.valid = ValidClass()
         self.parse = ParseClass(self)
@@ -92,9 +94,7 @@ class Underscore:
 
     # returns a string from the contents of a url
     def rs(self, url):
-        http = urllib3.PoolManager()
-        response = http.request('GET', url)
-        return str(response.data, "utf-8")
+        return urllib.request.urlopen(url).read()
 
     # returns an obj from a rest url
     def ra(self, url):
@@ -510,11 +510,24 @@ class TimeClass:
 
 
 class ConvertClass:
-    def __init__(self):
+    def __init__(self, underscore):
         self.decimal = ConvertDecimal()
         self.hex = ConvertHex(self.decimal)
         self.binary = ConvertBinary(self.decimal)
         self.ascii = ConvertAscii(self.decimal)
+        self._ = underscore
+
+    def money(self, amount, currency, base_currency="USD"):
+        response = self._.ra("https://api.exchangeratesapi.io/latest?base=" + str(base_currency).upper())
+        if "rates" in response:
+            rates = response['rates']
+            if str(currency).upper() in rates:
+                rate = rates[str(currency).upper()]
+                return amount * rate
+            else:
+                raise Exception(currency + " is an invalid currency")
+        else:
+            raise Exception("Could not get the rates from exchangeratesapi.io")
 
 
 class ConvertDecimal:

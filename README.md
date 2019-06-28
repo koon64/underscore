@@ -189,6 +189,12 @@ _.time.natural_day(time1)  # "today"
 ```
 
 ### Convert Class
+#### Money
+Uses https://exchangeratesapi.io
+```python
+# Converts currency
+_.convert.money(1, "CAD", base_currency="USD")  # 1.31
+```
 #### Decimal
 ```python
 # Converts decimal to binary
